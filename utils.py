@@ -15,7 +15,7 @@ def setup_seed(seed):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-def get_auc(HSI_old, HSI_new, gt):
+def get_auc(HSI_old, HSI_new):
     n_row, n_col, n_band = HSI_old.shape
     n_pixels = n_row * n_col
         
@@ -30,13 +30,13 @@ def get_auc(HSI_old, HSI_new, gt):
     detectmap = map01(detectmap)
 
     # get auc
-    label = np.reshape(gt, (n_pixels,1), order='F')
+    # label = np.reshape(gt, (n_pixels,1), order='F')
     
-    auc = roc_auc_score(label, detectmap)
+    # auc = roc_auc_score(label, detectmap)
     
     detectmap = np.reshape(detectmap, (n_row, n_col), order='F')
     
-    return auc, detectmap
+    return detectmap
 
 def TensorToHSI(img):
     HSI = img.squeeze().cpu().data.numpy().transpose((1, 2, 0))

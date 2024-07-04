@@ -233,8 +233,8 @@ def predict(opt):
     input_data = sio.loadmat(image_file)
     image = input_data['data']
     image = image.astype(np.float32)
-    gt = input_data['map']
-    gt = gt.astype(np.float32)
+    # gt = input_data['map']
+    # gt = gt.astype(np.float32)
     
     image = ((image - image.min()) / (image.max() - image.min()))
 
@@ -247,7 +247,7 @@ def predict(opt):
     device = torch.device('cuda:{}'.format(0)) if torch.cuda.is_available() else torch.device('cpu')
     
     net = PDBSNet(factor=opt.factor_test, nch_in=band, nch_out=band, nch_ker=opt.nch_ker, nblk=opt.nblk).to(device)
-    net.load_state_dict(torch.load(model_weights, map_location = 'cuda:0'))
+    net.load_state_dict(torch.load(model_weights, map_location = 'cpu'))
     
     t_begin = time.time()
     
@@ -261,12 +261,12 @@ def predict(opt):
     HSI_old = TensorToHSI(img_old)
     HSI_new = TensorToHSI(img_new)
     
-    auc, detectmap = get_auc(HSI_old, HSI_new, gt)
+    detectmap = get_auc(HSI_old, HSI_new)
     
     t_end = time.time()
 
-    print("AUC: " + str(auc))
-    print("AUC: " + str(auc), file = log_output)
+    # print("AUC: " + str(auc))
+    # print("AUC: " + str(auc), file = log_output)
 
     print('Time of testing-{}s'.format((t_end - t_begin)))
     print('Time of testing-{}s'.format((t_end - t_begin)), file = log_output)
